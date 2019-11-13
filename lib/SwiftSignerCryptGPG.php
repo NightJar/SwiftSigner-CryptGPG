@@ -52,7 +52,7 @@ class SwiftSignerCryptGPG implements Swift_Signers_BodySigner
     {
         // Copy message - cloning would also copy the signers.
         // This is to avoid an infinite loop when getting the message as a string - toString calls doSign first!
-        $messageCopy = Swift_Message::newInstance(
+        $messageCopy = new Swift_Message(
             $message->getSubject(),
             $message->getBody(),
             $message->getContentType(),
@@ -75,13 +75,13 @@ class SwiftSignerCryptGPG implements Swift_Signers_BodySigner
         // Format PGP/MIME
         $encoder = Swift_Encoding::get7BitEncoding();
 
-        $pgpmime = Swift_Attachment::newInstance('Version: 1')
-            ->setContentType('application/pgp-encrypted')
-            ->setEncoder($encoder);
+        $pgpmime = new Swift_Attachment('Version: 1');
+        $pgpmime->setContentType('application/pgp-encrypted');
+        $pgpmime->setEncoder($encoder);
         $pgpmime->getHeaders()->remove('Content-Transfer-Encoding');
 
-        $encryptedMessage = Swift_Attachment::newInstance($encryptedBody, 'message.asc')
-            ->setEncoder($encoder);
+        $encryptedMessage = new Swift_Attachment($encryptedBody, 'message.asc');
+        $encryptedMessage->setEncoder($encoder);
         $encryptedMessage->getHeaders()->remove('Content-Transfer-Encoding');
 
         // Prepare message final form
@@ -99,23 +99,5 @@ class SwiftSignerCryptGPG implements Swift_Signers_BodySigner
     public function getAlteredHeaders()
     {
         return [];
-    }
-
-    /**
-     * Returns a new SwiftSignerCryptGPG instance
-     *
-     * @param string $encryptKey
-     * @param string $signKey
-     * @param string $passphrase
-     * @param array $options
-     * @return self
-     */
-    public static function newInstance(
-        string $encryptKey,
-        string $signKey = '',
-        string $passphrase = '',
-        array $options = []
-    ) {
-        return new self($encryptKey, $signKey, $passphrase, $options);
     }
 }
