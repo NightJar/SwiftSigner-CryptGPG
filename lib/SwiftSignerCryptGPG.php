@@ -4,7 +4,7 @@ namespace Nightjar;
 
 use Crypt_GPG;
 use Swift_Attachment;
-use Swift_Encoding;
+use Swift_DependencyContainer;
 use Swift_Message;
 use Swift_Signers_BodySigner;
 
@@ -73,7 +73,7 @@ class SwiftSignerCryptGPG implements Swift_Signers_BodySigner
             : $this->gpg->encrypt($body);
 
         // Format PGP/MIME
-        $encoder = Swift_Encoding::get7BitEncoding();
+        $encoder = Swift_DependencyContainer::getInstance()->lookup('mime.7bitcontentencoder');
 
         $pgpmime = new Swift_Attachment('Version: 1');
         $pgpmime->setContentType('application/pgp-encrypted');
