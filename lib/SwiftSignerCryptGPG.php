@@ -87,6 +87,7 @@ class SwiftSignerCryptGPG implements Swift_Signers_BodySigner
         // Prepare message final form
         $message
             ->setEncoder($encoder)
+            ->setBody(null)
             ->setChildren([$pgpmime, $encryptedMessage]);
 
         $type = $message->getHeaders()->get('Content-Type');
